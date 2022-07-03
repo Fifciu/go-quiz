@@ -1,3 +1,7 @@
+<script setup>
+
+</script>
+
 <template>
-UserDashboard
+You are logged in
 </template>

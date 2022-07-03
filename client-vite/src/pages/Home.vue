@@ -1,24 +1,22 @@
-<script setup>
-import { reactive, ref } from 'vue';
+<script lang="ts" setup>
+import { reactive, ref, watch } from 'vue';
 import { useQuasar } from 'quasar'
+import { emailValidator } from '../utils/emailValidator';
+import TransitionExpand from '../components/TransitionExpand.vue';
 
 const user = reactive({
   email: '',
+  fullname: '',
   password: ''
 });
 
-const emailValidator = email =>
-  String(email)
-    .toLowerCase()
-    .match(
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    );
+const uiForm = ref(null);
 
 const $q = useQuasar()
 
-const name = ref(null)
-const age = ref(null)
-const accept = ref(false)
+const REGISTER_TAB = 'register';
+const LOGIN_TAB = 'login';
+const tab = ref(LOGIN_TAB);
 
 const onSubmit = () => {
   if (accept.value !== true) {
@@ -40,10 +38,14 @@ const onSubmit = () => {
 }
 
 const onReset = () => {
-  name.value = null
-  age.value = null
-  accept.value = false
-}
+  user.email = '';
+  user.fullname = '';
+  user.password = '';
+  (uiForm.value as any).resetValidation();
+};
+
+watch(tab, onReset);
+
 </script>
 
 <template>
@@ -53,9 +55,26 @@ const onReset = () => {
         <img src="/goicon.png" class="home__logo" />
       </div>
       <div class="home__card">
+
         <q-card class="text-black">
-          <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
+          <q-tabs v-model="tab" inline-label class="text-white shadow-2 home__tabs">
+            <q-tab :name="LOGIN_TAB" icon="mail" label="Login" />
+            <q-tab :name="REGISTER_TAB" icon="alarm" label="Register" />
+          </q-tabs>
+
+          <q-form ref="uiForm" @submit="onSubmit" @reset="onReset" class="q-gutter-md">
             <q-card-section>
+              <TransitionExpand>
+                <q-input v-if="tab === REGISTER_TAB" label="Your full name *" hint="Full name" lazy-rules :rules="[
+                  val => val && val.length > 0 || 'Please type something',
+                  val => val && val.lenght >= 3 || 'Full name has to have at least 3 chars'
+                ]" bottom-slots v-model="user.fullname">
+                  <template v-slot:prepend>
+                    <q-icon name="person" />
+                  </template>
+                </q-input>
+              </TransitionExpand>
+
               <q-input label="Your email address *" hint="Email address" lazy-rules :rules="[
                 val => val && val.length > 0 || 'Please type something',
                 val => val && emailValidator(val) || 'Wrong email'
@@ -74,18 +93,10 @@ const onReset = () => {
                 </template>
               </q-input>
 
+              <q-btn label="Send" type="submit" color="primary" style="margin-left: 50%;transform:translateX(-50%);" />
 
             </q-card-section>
-
-            <q-card-actions>
-              <div>
-                <q-btn label="Register" type="submit" color="primary" />
-                <q-btn label="Login" type="submit" color="green" class="q-ml-sm" />
-                <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
-              </div>
-            </q-card-actions>
           </q-form>
-
         </q-card>
       </div>
     </div>
@@ -93,11 +104,22 @@ const onReset = () => {
 </template>
 
 <style lang="scss">
+// #006cad blue
+// #fcc2c0 pink
+
 .home {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
+
+  &__tabs {
+    background: #1a1a1a;
+
+    &:hover {
+      background: #262626;
+    }
+  }
 
   &__wrapper {
     width: 100%;

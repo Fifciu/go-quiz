@@ -15,7 +15,8 @@ func main() {
 	// pwaHost := os.Getenv("pwa_host");
 	// http.HandleFunc("/auth", Auth);
 	// http.HandleFunc("/refresh", Refresh);
-	http.HandleFunc("/user", controllers.CreateUser);
+	http.HandleFunc("/login", controllers.LoginUser);
+	http.HandleFunc("/register", controllers.CreateUser);
 
 	apiProtocol := os.Getenv("api_protocol");
 	apiHost := os.Getenv("api_host");

@@ -16,7 +16,6 @@ type User struct {
 }
 
 func CreateUser (fullname string, email string, password string) (*User, error) {
-	// https://dev.mysql.com/doc/mysql-errors/8.0/en/server-error-reference.html
 	query, err := GetDB().Prepare("INSERT INTO users(fullname, email, password) VALUES (?, ?, ?)");
 	if err != nil {
 		log.Error(fmt.Sprintf("models.CreateUser/ %s", err.Error()));
@@ -50,4 +49,15 @@ func CreateUser (fullname string, email string, password string) (*User, error) 
 		Email: email,
 		Password: password,
 	}, nil
+}
+
+func GetUserByEmail (email string) (*User, error) {
+	user := &User{};
+	err := GetDB().QueryRow("SELECT * FROM users WHERE email = ?", email).Scan(&user.ID, &user.Fullname, &user.Email, &user.Password);
+	if err != nil {
+		log.Error(fmt.Sprintf("models.GetUserByEmail/ %s", err.Error()));
+		return nil, errors.New(http.StatusText(http.StatusInternalServerError));
+	}
+
+	return user, nil;
 }

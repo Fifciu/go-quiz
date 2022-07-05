@@ -1,5 +1,13 @@
 package models
 
+import (
+	"fmt"
+	"errors"
+	"net/http"
+	log "github.com/sirupsen/logrus"
+	mysql "github.com/go-sql-driver/mysql"
+)
+
 type User struct {
 	ID	uint	`json:"id"`
 	Fullname string `json:"fullname"`
@@ -7,25 +15,33 @@ type User struct {
 	Password string `json:"password"`
 }
 
-func CreateUser (fullname string, email string, password string) *User {
-	salt := "12345678"; // TODO
-	query, err := GetDB().Prepare("INSERT INTO users(fullname, email, password, salt) VALUES (?, ?, ?, ?)");
+func CreateUser (fullname string, email string, password string) (*User, error) {
+	// https://dev.mysql.com/doc/mysql-errors/8.0/en/server-error-reference.html
+	query, err := GetDB().Prepare("INSERT INTO users(fullname, email, password) VALUES (?, ?, ?)");
 	if err != nil {
-		panic(err.Error());
-		// TODO
+		log.Error(fmt.Sprintf("models.CreateUser/ %s", err.Error()));
+		return nil, errors.New(http.StatusText(http.StatusInternalServerError));
 	}
 
-	res, err := query.Exec(fullname, email, password, salt);
-
+	res, err := query.Exec(fullname, email, password);
 	if err != nil {
-		panic(err.Error());
-		// TODO
+		me, ok := err.(*mysql.MySQLError);
+		if !ok {
+			log.Error(fmt.Sprintf("models.CreateUser/ %s", err.Error()));
+			return nil, errors.New(http.StatusText(http.StatusInternalServerError));
+		}
+		if me.Number == 1062 {
+			log.Debug(fmt.Sprintf("models.CreateUser/ %s", err.Error()));
+			return nil, errors.New("Email already used");
+		}
+		log.Error(fmt.Sprintf("models.CreateUser/ %s", err.Error()));
+		return nil, errors.New(http.StatusText(http.StatusInternalServerError));
 	}
 
 	lastId, err := res.LastInsertId();
 	if err != nil {
-		panic(err.Error());
-		// TODO
+		log.Error(fmt.Sprintf("models.CreateUser/ %s", err.Error()));
+		return nil, errors.New(http.StatusText(http.StatusInternalServerError));
 	}
 
 	return &User{
@@ -33,5 +49,5 @@ func CreateUser (fullname string, email string, password string) *User {
 		Fullname: fullname,
 		Email: email,
 		Password: password,
-	}
+	}, nil
 }

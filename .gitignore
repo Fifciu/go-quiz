@@ -1,0 +1,16 @@
+**/.idea/*
+tmp
+.DS_Store
+/node_modules/
+/src/node_modules/@sapper/
+yarn-error.log
+/cypress/screenshots/
+/__sapper__/
+.env
+test
+jwt-go
+go-sqlmock
+air
+node_modules
+server/database
+server/server

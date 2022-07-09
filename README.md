@@ -29,3 +29,8 @@ As `container_id` put mariadb container ID. You can get it by using `docker ps` 
  cd client;
  yarn dev;
 ```
+
+## Development
+
+### MySQL codes refrence
+[Here](https://dev.mysql.com/doc/mysql-errors/8.0/en/server-error-reference.html).

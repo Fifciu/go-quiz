@@ -52,7 +52,13 @@ watch(tab, onReset);
   <div class="home__wrapper">
     <div class="home">
       <div class="home__logo__wrapper">
-        <img src="/goicon.png" class="home__logo" />
+        <div class="home__logo-inner-wrapper">
+          <div class="logo__igi__wrapper">
+            <img src="/IGIGOResized.png" class="home__logo logo__igi" />
+            <img src="/IGIWlos.png" class="home__logo logo__igi__wlos" />
+          </div>
+          <img src="/FilipGOResized.png" class="home__logo home__logo__fifi" />
+        </div>
       </div>
       <div class="home__card">
 
@@ -113,6 +119,11 @@ watch(tab, onReset);
   justify-content: center;
   flex-wrap: wrap;
 
+&__logo-inner-wrapper {
+    display: flex;
+
+  }
+
   &__tabs {
     background: #1a1a1a;
 
@@ -137,17 +148,47 @@ watch(tab, onReset);
   }
 
   &__logo {
-    max-width: 200px;
-    margin-bottom: -6px;
+    max-width: 150px;
+    margin-bottom: -46px;
+
+    &__fifi {
+      transform: rotate(353deg);
+      left: -28px;
+      position: relative;
+    }
   }
 
   &__logo__wrapper {
     width: 100%;
     text-align: center;
+    display: flex;
+    justify-content: center;
   }
 
   &__card {
     min-width: 300px;
   }
+}
+
+.logo {
+  &__igi {
+
+    &__wrapper {
+      position: relative;
+    bottom: -39px;
+      left: -19px;
+
+    }
+
+    &__wlos {
+      position: absolute;
+      z-index:1;
+      left: 0;
+      bottom: 0;
+      max-width:30px;
+      pointer-events: none;
+    }
+  }
+
 }
 </style>

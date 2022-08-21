@@ -15,6 +15,12 @@ type User struct {
 	Password string `json:"password"`
 }
 
+type UserPublic struct {
+	ID	uint	`json:"id"`
+	Fullname string `json:"fullname"`
+	Email string `json:"email"`
+}
+
 func CreateUser (fullname string, email string, password string) (*User, error) {
 	query, err := GetDB().Prepare("INSERT INTO users(fullname, email, password) VALUES (?, ?, ?)");
 	if err != nil {

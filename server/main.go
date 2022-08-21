@@ -1,31 +1,46 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
-	"fmt"
+
 	controllers "github.com/Fifciu/go-quiz/server/controllers"
+	middlewares "github.com/Fifciu/go-quiz/server/middlewares"
 )
 
 func main() {
-	// pwaProtocol := os.Getenv("pwa_protocol");
-	// pwaHost := os.Getenv("pwa_host");
-	// pwaPort := os.Getenv("pwa_port");
-	// pwaHost := os.Getenv("pwa_host");
-	// http.HandleFunc("/auth", Auth);
-	// http.HandleFunc("/refresh", Refresh);
-	http.HandleFunc("/login", controllers.LoginUser);
-	http.HandleFunc("/register", controllers.CreateUser);
+	http.HandleFunc("/register", controllers.CreateUser)
+	http.HandleFunc("/login", controllers.LoginUser)
+	http.HandleFunc("/me", middlewares.Authenticated(controllers.UserMe))
 
-	apiProtocol := os.Getenv("api_protocol");
-	apiHost := os.Getenv("api_host");
-	apiPort := os.Getenv("api_port");
+	http.HandleFunc("/tests", controllers.GetTests)
+
+	// Each test has: ID, title, image, description
+	// Each question has: ID, test_id, content
+	// Each answer has: ID, question_id, content, is_proper
+	// Each user_answer has: ID, user_id, answer_id, datetime
+	// Each result has ID, user_id, test_id, start_datetime, finish_datetime,
+
+	// TODO: Export new DB
+
+	// Endpoints
+	// GET /tests AUTH
+	// GET /tests/results AUTH-PER-USER
+	// POST /results/:test-id AUTH aka Start test
+	// GET /tests/questions/answers AUTH; remove is_proper!
+	// POST /answer/:answer-id AUTH; adds user_answer
+	// POST /results/:test-id/finish finishes test if every question is answered
+	// GET /results/:test-id Gives results if test is finished
+
+	apiProtocol := os.Getenv("api_protocol")
+	apiHost := os.Getenv("api_host")
+	apiPort := os.Getenv("api_port")
 	if apiPort == "" {
-		apiPort = "8090";
+		apiPort = "8090"
 	}
-	fmt.Println(fmt.Sprintf("It works on %s://%s:%s address", apiProtocol, apiHost, apiPort));
+	fmt.Println(fmt.Sprintf("It works on %s://%s:%s address", apiProtocol, apiHost, apiPort))
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", apiPort), nil));
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", apiPort), nil))
 }
-

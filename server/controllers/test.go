@@ -34,7 +34,7 @@ func GetTestsQuestionsAndAnswers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// [ ] GET /tests/:test_id/questions/answers AUTH; remove is_proper!
+	// [x] GET /tests/:test_id/questions/answers AUTH; remove is_proper, prohibited if user didn't start quiz
 	baseUrl := r.URL.Path[len("/tests/"):]
 	parts := strings.Split(baseUrl, "/")
 

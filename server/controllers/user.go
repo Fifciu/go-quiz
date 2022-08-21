@@ -29,7 +29,6 @@ type SignedUser struct {
 }
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
-	// curl -XPOST -d "{\"fullname\":\"John Doe\", \"email\":\"johndoe@gmail.com\", \"password\":\"zaq1@WSX\"}" http://localhost:8090/user
 	if r.Method != "POST" {
 		utils.JsonErrorResponse(w, http.StatusNotFound, "Page not found")
 		return

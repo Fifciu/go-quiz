@@ -15,7 +15,8 @@ func main() {
 	http.HandleFunc("/login", controllers.LoginUser)
 	http.HandleFunc("/me", middlewares.Authenticated(controllers.UserMe))
 
-	http.HandleFunc("/tests", controllers.GetTests)
+	http.HandleFunc("/tests", middlewares.Authenticated(controllers.GetTests))
+	http.HandleFunc("/results/", middlewares.Authenticated(controllers.ResultsHandler)) // DAMN
 
 	// Each test has: ID, title, image, description
 	// Each question has: ID, test_id, content
@@ -26,11 +27,11 @@ func main() {
 	// TODO: Export new DB
 
 	// Endpoints
-	// GET /tests AUTH
+	// [X] GET /tests AUTH
 	// GET /tests/results AUTH-PER-USER
-	// POST /results/:test-id AUTH aka Start test
 	// GET /tests/questions/answers AUTH; remove is_proper!
 	// POST /answer/:answer-id AUTH; adds user_answer
+	// POST /results/:test-id/start AUTH aka Start test
 	// POST /results/:test-id/finish finishes test if every question is answered
 	// GET /results/:test-id Gives results if test is finished
 

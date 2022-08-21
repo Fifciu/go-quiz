@@ -12,7 +12,7 @@ type Test struct {
 	ID          uint   `json:"id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
-	ImageUrl    string `json:"image_Url"`
+	ImageUrl    string `json:"image_url"`
 }
 
 func GetTests() ([]*Test, error) {

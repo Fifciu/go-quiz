@@ -31,7 +31,7 @@ type SignedUser struct {
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	// curl -XPOST -d "{\"fullname\":\"John Doe\", \"email\":\"johndoe@gmail.com\", \"password\":\"zaq1@WSX\"}" http://localhost:8090/user
 	if r.Method != "POST" {
-		http.Error(w, "Page not found", http.StatusNotFound)
+		utils.JsonErrorResponse(w, http.StatusNotFound, "Page not found")
 		return
 	}
 	d := json.NewDecoder(r.Body)

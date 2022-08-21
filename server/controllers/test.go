@@ -12,6 +12,10 @@ import (
 )
 
 func GetTests(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		utils.JsonErrorResponse(w, http.StatusNotFound, "Page not found")
+		return
+	}
 	tests, err := models.GetTests()
 	if err != nil {
 		log.Error(fmt.Sprintf("controllers.GetTests / %s", err.Error()))

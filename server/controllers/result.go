@@ -22,7 +22,7 @@ func ResultsHandler(w http.ResponseWriter, r *http.Request) {
 
 	testId, err := strconv.Atoi(parts[0])
 	if err != nil || testId < 1 {
-		utils.JsonErrorResponse(w, http.StatusNotFound, "Wrong ID")
+		utils.JsonErrorResponse(w, http.StatusNotFound, "Wrong Test ID")
 		return
 	}
 	values := r.Context().Value("user").(*utils.Claims)

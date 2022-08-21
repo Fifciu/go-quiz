@@ -16,7 +16,9 @@ func main() {
 	http.HandleFunc("/me", middlewares.Authenticated(controllers.UserMe))
 
 	http.HandleFunc("/tests", middlewares.Authenticated(controllers.GetTests))
+	http.HandleFunc("/tests/", middlewares.Authenticated(controllers.GetTestsQuestionsAndAnswers))
 	http.HandleFunc("/results/", middlewares.Authenticated(controllers.ResultsHandler)) // DAMN
+	http.HandleFunc("/answers/", middlewares.Authenticated(controllers.PutAnswer))
 
 	// Each test has: ID, title, image, description
 	// Each question has: ID, test_id, content
@@ -29,9 +31,9 @@ func main() {
 	// Endpoints
 	// [X] GET /tests AUTH
 	// GET /tests/results AUTH-PER-USER
-	// GET /tests/questions/answers AUTH; remove is_proper!
-	// POST /answer/:answer-id AUTH; adds user_answer
-	// POST /results/:test-id/start AUTH aka Start test
+	// [x] GET /tests/:test_id/questions/answers AUTH; remove is_proper, prohibited if user didn't start quiz
+	// [x] PUT /answers/:answer-id AUTH; adds user_answer
+	// [x] POST /results/:test-id/start AUTH aka Start test
 	// POST /results/:test-id/finish finishes test if every question is answered
 	// GET /results/:test-id Gives results if test is finished
 

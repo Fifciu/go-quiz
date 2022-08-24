@@ -44,6 +44,7 @@ func ResultsHandler(w http.ResponseWriter, r *http.Request) {
 				utils.JsonErrorResponse(w, http.StatusNotFound, err.Error())
 				return
 			}
+			// Lack of start_datetime
 			utils.JsonResponse(w, http.StatusCreated, newResult)
 			return
 		} else if parts[1] == "finish" {

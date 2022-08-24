@@ -30,12 +30,12 @@ func main() {
 
 	// Endpoints
 	// [X] GET /tests AUTH
-	// GET /tests/results AUTH-PER-USER
+	// [x] GET /tests/results AUTH-PER-USER
 	// [x] GET /tests/:test_id/questions/answers AUTH; remove is_proper, prohibited if user didn't start quiz
 	// [x] PUT /answers/:answer-id AUTH; adds user_answer
 	// [x] POST /results/:test-id/start AUTH aka Start test
-	// POST /results/:test-id/finish finishes test if every question is answered
-	// GET /results/:test-id Gives results if test is finished
+	// [x] POST /results/:result-id/finish finishes test if every question is answered
+	// [x] GET /results/:result-id Gives results if test is finished
 
 	apiProtocol := os.Getenv("api_protocol")
 	apiHost := os.Getenv("api_host")

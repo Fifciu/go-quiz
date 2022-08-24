@@ -38,8 +38,21 @@ func GetTestsQuestionsAndAnswers(w http.ResponseWriter, r *http.Request) {
 	baseUrl := r.URL.Path[len("/tests/"):]
 	parts := strings.Split(baseUrl, "/")
 
-	if len(parts) != 3 {
+	if len(parts) != 3 && len(parts) != 1 {
 		utils.JsonErrorResponse(w, http.StatusNotFound, "Page not found")
+		return
+	}
+
+	values := r.Context().Value("user").(*utils.Claims)
+	userId := values.ID
+
+	if parts[0] == "results" {
+		stats, err := models.GetUserEveryResults(userId)
+		if err != nil {
+			utils.JsonErrorResponse(w, http.StatusNotFound, err.Error())
+			return
+		}
+		utils.JsonResponse(w, http.StatusOK, stats)
 		return
 	}
 
@@ -49,8 +62,6 @@ func GetTestsQuestionsAndAnswers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	values := r.Context().Value("user").(*utils.Claims)
-	userId := values.ID
 	_, err = models.GetResultByTestIdAndUserId(uint(testId), userId)
 	if err != nil {
 		// User didn't start quiz! 403

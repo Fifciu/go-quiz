@@ -27,6 +27,7 @@ func main() {
 	// Each result has ID, user_id, test_id, start_datetime, finish_datetime,
 
 	// TODO: Export new DB
+	// TODO: Refactor with Go Chi, as that's all I need
 
 	// Endpoints
 	// [X] GET /tests AUTH
@@ -34,8 +35,9 @@ func main() {
 	// [x] GET /tests/:test_id/questions/answers AUTH; remove is_proper, prohibited if user didn't start quiz
 	// [x] PUT /answers/:answer-id AUTH; adds user_answer
 	// [x] POST /results/:test-id/start AUTH aka Start test
-	// [x] POST /results/:result-id/finish finishes test if every question is answered
+	// [x] POST /results/:result-id/finish finishes test if every question is answeres
 	// [x] GET /results/:result-id Gives results if test is finished
+	// [ ] POST /refresh Refreshes token
 
 	apiProtocol := os.Getenv("api_protocol")
 	apiHost := os.Getenv("api_host")

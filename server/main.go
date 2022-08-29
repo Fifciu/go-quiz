@@ -28,6 +28,7 @@ func main() {
 
 	// TODO: Export new DB
 	// TODO: Refactor with Go Chi, as that's all I need
+	// TODO: Update JWT package
 
 	// Endpoints
 	// [X] GET /tests AUTH

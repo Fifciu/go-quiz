@@ -3,22 +3,14 @@ package controllers
 import (
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/Fifciu/go-quiz/server/models"
 	"github.com/Fifciu/go-quiz/server/utils"
+	"github.com/go-chi/chi/v5"
 )
 
 func PutAnswer(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "PUT" {
-		utils.JsonErrorResponse(w, http.StatusNotFound, "Page not found")
-		return
-	}
-
-	baseUrl := r.URL.Path[len("/answers/"):]
-	parts := strings.Split(baseUrl, "/")
-
-	answerId, err := strconv.Atoi(parts[0])
+	answerId, err := strconv.Atoi(chi.URLParam(r, "answerId"))
 	if err != nil || answerId < 1 {
 		utils.JsonErrorResponse(w, http.StatusNotFound, "Wrong Answer ID")
 		return

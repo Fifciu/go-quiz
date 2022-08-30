@@ -3,10 +3,10 @@ package controllers
 import (
 	"net/http"
 	"strconv"
-	"strings"
 
 	"fmt"
 
+	"github.com/go-chi/chi/v5"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/Fifciu/go-quiz/server/models"
@@ -14,10 +14,6 @@ import (
 )
 
 func GetTests(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		utils.JsonErrorResponse(w, http.StatusNotFound, "Page not found")
-		return
-	}
 	tests, err := models.GetTests()
 	if err != nil {
 		log.Error(fmt.Sprintf("controllers.GetTests / %s", err.Error()))
@@ -29,34 +25,10 @@ func GetTests(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetTestsQuestionsAndAnswers(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		utils.JsonErrorResponse(w, http.StatusNotFound, "Page not found")
-		return
-	}
-
-	// [x] GET /tests/:test_id/questions/answers AUTH; remove is_proper, prohibited if user didn't start quiz
-	baseUrl := r.URL.Path[len("/tests/"):]
-	parts := strings.Split(baseUrl, "/")
-
-	if len(parts) != 3 && len(parts) != 1 {
-		utils.JsonErrorResponse(w, http.StatusNotFound, "Page not found")
-		return
-	}
-
 	values := r.Context().Value("user").(*utils.Claims)
 	userId := values.ID
 
-	if parts[0] == "results" {
-		stats, err := models.GetUserEveryResults(userId)
-		if err != nil {
-			utils.JsonErrorResponse(w, http.StatusNotFound, err.Error())
-			return
-		}
-		utils.JsonResponse(w, http.StatusOK, stats)
-		return
-	}
-
-	testId, err := strconv.Atoi(parts[0])
+	testId, err := strconv.Atoi(chi.URLParam(r, "testId"))
 	if err != nil || testId < 1 {
 		utils.JsonErrorResponse(w, http.StatusNotFound, "Wrong Test ID")
 		return
@@ -75,5 +47,18 @@ func GetTestsQuestionsAndAnswers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	utils.JsonResponse(w, http.StatusOK, response)
+	return
+}
+
+func GetEachTestResults(w http.ResponseWriter, r *http.Request) {
+	values := r.Context().Value("user").(*utils.Claims)
+	userId := values.ID
+
+	stats, err := models.GetUserEveryResults(userId)
+	if err != nil {
+		utils.JsonErrorResponse(w, http.StatusNotFound, err.Error())
+		return
+	}
+	utils.JsonResponse(w, http.StatusOK, stats)
 	return
 }

@@ -4,10 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
+	"strconv"
 	"time"
 
 	models "github.com/Fifciu/go-quiz/server/models"
 	utils "github.com/Fifciu/go-quiz/server/utils"
+	"github.com/dgrijalva/jwt-go"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -153,6 +156,67 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 
 	utils.JsonResponse(w, http.StatusOK, &SignedUser{
 		Token:          token,
+		ExpirationTime: expirationTime,
+	})
+}
+
+func RefreshToken(w http.ResponseWriter, r *http.Request) {
+	cookieKey := os.Getenv("cookie_token_key")
+	c, err := r.Cookie(cookieKey)
+	if err != nil {
+		if err == http.ErrNoCookie {
+			utils.JsonErrorResponse(w, http.StatusUnauthorized, "Authorization cookie not sent")
+			return
+		}
+		utils.JsonErrorResponse(w, http.StatusBadRequest, "Bad request")
+		return
+	}
+	tokenFromCookie := c.Value
+	claims := &utils.Claims{}
+	jwtKey := os.Getenv("jwt_key")
+
+	tkn, err := jwt.ParseWithClaims(tokenFromCookie, claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(jwtKey), nil
+	})
+	if err != nil {
+		if err == jwt.ErrSignatureInvalid {
+			utils.JsonErrorResponse(w, http.StatusUnauthorized, "Invalid signature. Unauthorized")
+			return
+		}
+		fmt.Println(err.Error())
+		utils.JsonErrorResponse(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if !tkn.Valid {
+		utils.JsonErrorResponse(w, http.StatusUnauthorized, "Invalid token. Unauthorized")
+		return
+	}
+
+	if time.Unix(claims.ExpiresAt, 0).Sub(time.Now()) > 30*time.Second {
+		utils.JsonErrorResponse(w, http.StatusBadRequest, "It's too early to refresh the token")
+		return
+	}
+
+	jwtTtlString := os.Getenv("jwt_ttl")
+	jwtTtl, err := strconv.Atoi(jwtTtlString)
+	if err != nil {
+		log.Error(fmt.Sprintf("controllers.RefreshToken / %s", err.Error()))
+		utils.JsonErrorResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	expirationTime := time.Now().Add(time.Duration(jwtTtl) * time.Second)
+	claims.ExpiresAt = expirationTime.Unix()
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString([]byte(jwtKey))
+	if err != nil {
+		log.Error(fmt.Sprintf("controllers.RefreshToken / %s", err.Error()))
+		utils.JsonErrorResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	utils.JsonResponse(w, http.StatusOK, &SignedUser{
+		Token:          tokenString,
 		ExpirationTime: expirationTime,
 	})
 }

@@ -13,6 +13,7 @@ import (
 func main() {
 	http.HandleFunc("/register", controllers.CreateUser)
 	http.HandleFunc("/login", controllers.LoginUser)
+	http.HandleFunc("/refresh", controllers.RefreshToken)
 	http.HandleFunc("/me", middlewares.Authenticated(controllers.UserMe))
 
 	http.HandleFunc("/tests", middlewares.Authenticated(controllers.GetTests))

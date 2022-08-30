@@ -10,7 +10,7 @@ import (
 
 	models "github.com/Fifciu/go-quiz/server/models"
 	utils "github.com/Fifciu/go-quiz/server/utils"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v4"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 )

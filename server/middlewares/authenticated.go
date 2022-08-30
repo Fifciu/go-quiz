@@ -8,7 +8,7 @@ import (
 	"os"
 
 	utils "github.com/Fifciu/go-quiz/server/utils"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 func Authenticated(next func(w http.ResponseWriter, r *http.Request)) func(w http.ResponseWriter, r *http.Request) {

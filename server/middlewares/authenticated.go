@@ -11,13 +11,13 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-func Authenticated(next func(w http.ResponseWriter, r *http.Request)) func(w http.ResponseWriter, r *http.Request) {
+func Authenticated(next http.Handler) http.Handler {
 	cookieKey := os.Getenv("cookie_token_key")
 	if cookieKey == "" {
 		log.Fatal("Couldn't find value of 'cookie_token_key' environment variable!")
 		panic("Couldn't find value of 'cookie_token_key' environment variable!")
 	}
-	return func(w http.ResponseWriter, r *http.Request) {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		c, err := r.Cookie(cookieKey)
 		if err != nil {
 			if err == http.ErrNoCookie {
@@ -52,6 +52,6 @@ func Authenticated(next func(w http.ResponseWriter, r *http.Request)) func(w htt
 
 		fmt.Println("Authenticated middleware")
 		ctx := context.WithValue(r.Context(), "user", claims)
-		next(w, r.WithContext(ctx))
-	}
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
 }

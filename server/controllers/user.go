@@ -32,10 +32,6 @@ type SignedUser struct {
 }
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
-		utils.JsonErrorResponse(w, http.StatusNotFound, "Page not found")
-		return
-	}
 	d := json.NewDecoder(r.Body)
 	d.DisallowUnknownFields()
 
@@ -101,10 +97,6 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func LoginUser(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
-		http.Error(w, "Page not found", http.StatusNotFound)
-		return
-	}
 	d := json.NewDecoder(r.Body)
 	d.DisallowUnknownFields()
 

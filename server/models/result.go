@@ -17,11 +17,18 @@ func (d DateType) String() string {
 }
 
 type Result struct {
-	ID             uint     `json:"id"`
-	TestID         uint     `json:"test_id"`
-	UserID         uint     `json:"user_id"`
-	StartDatetime  DateType `json:"start_datetime"`
-	FinishDatetime DateType `json:"finish_datetime"`
+	ID             uint      `json:"id"`
+	TestID         uint      `json:"test_id"`
+	UserID         uint      `json:"user_id"`
+	StartDatetime  time.Time `json:"start_datetime"`
+	FinishDatetime time.Time `json:"finish_datetime"`
+}
+
+type CreatedResult struct {
+	ID            uint      `json:"id"`
+	TestID        uint      `json:"test_id"`
+	UserID        uint      `json:"user_id"`
+	StartDatetime time.Time `json:"start_datetime"`
 }
 
 type QuestionAndUserAnswer struct {
@@ -31,7 +38,7 @@ type QuestionAndUserAnswer struct {
 	IsProper bool   `json:"is_proper"`
 }
 
-func ResultStart(testId uint, userId uint) (*Result, error) {
+func ResultStart(testId uint, userId uint) (*CreatedResult, error) {
 	query, err := GetDB().Prepare("INSERT INTO results(test_id, user_id) VALUES (?, ?)")
 	if err != nil {
 		log.Error(fmt.Sprintf("models.ResultStart/ %s", err.Error()))
@@ -59,11 +66,11 @@ func ResultStart(testId uint, userId uint) (*Result, error) {
 		return nil, errors.New(http.StatusText(http.StatusInternalServerError))
 	}
 
-	return &Result{
+	return &CreatedResult{
 		ID:            uint(lastId),
 		TestID:        testId,
 		UserID:        userId,
-		StartDatetime: DateType(time.Now()),
+		StartDatetime: time.Now(),
 	}, nil
 }
 
@@ -127,7 +134,7 @@ func GetUserEveryResults(userId uint) ([]*QuestionAndUserAnswer, error) {
 	return response, nil
 }
 
-func GetResultByTestIdAndUserId(testId uint, userId uint) (*Result, error) {
+func GetResultByTestIdAndUserId(testId uint, userId uint) (*CreatedResult, error) {
 	var finishDatetimeTmp mysql.NullTime
 	result := &Result{}
 	err := GetDB().QueryRow("SELECT * FROM results WHERE test_id = ? AND user_id = ? and finish_datetime IS NULL", testId, userId).Scan(&result.ID, &result.TestID, &result.UserID, &result.StartDatetime, &finishDatetimeTmp)
@@ -135,9 +142,11 @@ func GetResultByTestIdAndUserId(testId uint, userId uint) (*Result, error) {
 		log.Error(fmt.Sprintf("models.GetResultByTestIdAndUserId/ %s", err.Error()))
 		return nil, errors.New(http.StatusText(http.StatusInternalServerError))
 	}
-	if finishDatetimeTmp.Valid {
-		result.FinishDatetime = DateType(finishDatetimeTmp.Time)
-	}
 
-	return result, nil
+	return &CreatedResult{
+		ID:            result.ID,
+		TestID:        result.TestID,
+		UserID:        result.UserID,
+		StartDatetime: result.StartDatetime,
+	}, nil
 }

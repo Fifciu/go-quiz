@@ -38,12 +38,6 @@ func main() {
 		r.Get("/{resultId}", controllers.GetResults)
 	})
 
-	// Each test has: ID, title, image, description
-	// Each question has: ID, test_id, content
-	// Each answer has: ID, question_id, content, is_proper
-	// Each user_answer has: ID, user_id, answer_id, datetime
-	// Each result has ID, user_id, test_id, start_datetime, finish_datetime,
-
 	apiProtocol := os.Getenv("api_protocol")
 	apiHost := os.Getenv("api_host")
 	apiPort := os.Getenv("api_port")

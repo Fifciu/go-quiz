@@ -8,13 +8,22 @@ import (
 
 	controllers "github.com/Fifciu/go-quiz/server/controllers"
 	middlewares "github.com/Fifciu/go-quiz/server/middlewares"
+	"github.com/Fifciu/go-quiz/server/utils"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 )
 
 func main() {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{utils.BuildClientBaseUrl()},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Content-Type"},
+		AllowCredentials: true,
+		MaxAge:           300,
+	}))
 	r.Route("/users", func(r chi.Router) {
 		r.Post("/register", controllers.CreateUser)
 		r.Post("/login", controllers.LoginUser)

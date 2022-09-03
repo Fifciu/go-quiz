@@ -89,11 +89,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.JsonResponse(w, http.StatusCreated, &SignedUser{
-		Token:          token,
-		ExpirationTime: expirationTime,
-	})
-	return
+	utils.CookieResponse(w, token, expirationTime)
 }
 
 func LoginUser(w http.ResponseWriter, r *http.Request) {
@@ -146,10 +142,7 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.JsonResponse(w, http.StatusOK, &SignedUser{
-		Token:          token,
-		ExpirationTime: expirationTime,
-	})
+	utils.CookieResponse(w, token, expirationTime)
 }
 
 func RefreshToken(w http.ResponseWriter, r *http.Request) {
@@ -207,10 +200,7 @@ func RefreshToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.JsonResponse(w, http.StatusOK, &SignedUser{
-		Token:          tokenString,
-		ExpirationTime: expirationTime,
-	})
+	utils.CookieResponse(w, tokenString, expirationTime)
 }
 
 func UserMe(w http.ResponseWriter, r *http.Request) {

@@ -3,9 +3,13 @@ import { useUserStore } from '../stores/user.store';
 import { onMounted, ref } from 'vue';
 import TestBlock from '../components/TestBlock.vue';
 import { client, TestPublic } from 'api-client';
+import { Cookies } from 'quasar';
+import { useRouter } from 'vue-router';
 
 const loadingTests = ref(true);
 const tests = ref<TestPublic[]>([]);
+
+const router = useRouter();
 
 onMounted(async () => {
   const { me } = useUserStore();
@@ -14,6 +18,11 @@ onMounted(async () => {
   tests.value = await client.tests.getAll();
   loadingTests.value = false;
 });
+
+const logout = () => {
+  Cookies.remove(import.meta.env.cookie_token_key);
+  router.push({ name: 'home' });
+};
 </script>
 
 <template>
@@ -28,7 +37,7 @@ onMounted(async () => {
           Go<strong>Quiz</strong>
         </q-toolbar-title>
         <q-space></q-space>
-
+        <q-btn flat round dense icon="exit_to_app" @click.native="logout" />
       </q-toolbar>
     </q-header>
 
@@ -40,11 +49,7 @@ onMounted(async () => {
             <q-tooltip>Loading available tests...</q-tooltip>
           </div>
           <div class="q-pa-md row items-start q-gutter-md" v-else-if="tests.length">
-            <TestBlock 
-              v-for="test in tests"
-              :key="test.id"
-              v-bind="test"
-            />
+            <TestBlock v-for="test in tests" :key="test.id" v-bind="test" />
           </div>
           <q-card class="my-card text-black" v-else>
             <q-card-section>

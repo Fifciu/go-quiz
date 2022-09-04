@@ -4,7 +4,8 @@ import {
   UsersSignUpDraft, 
   UsersSignInDraft,
   UsersToken, 
-  UserPublic 
+  UserPublic,
+  TestPublic
 } from './types';
 
 let instance: Axios;
@@ -22,6 +23,11 @@ export const client = {
     },
     async me (): Promise<UserPublic> {
       return (await instance.post('/users/me')).data;
+    }
+  },
+  tests: {
+    async getAll (): Promise<TestPublic[]> {
+      return (await instance.get('/tests')).data
     }
   }
 };

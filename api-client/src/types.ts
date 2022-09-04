@@ -22,4 +22,11 @@ export interface UserPublic {
 
 export interface ApiError {
   message: string;
-}
+};
+
+export interface TestPublic {
+  id: number;
+  title: string;
+  description: string;
+  image_url: string;
+};

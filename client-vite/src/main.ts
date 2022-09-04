@@ -19,7 +19,7 @@ const pinia = createPinia();
 const myApp = createApp(App);
 
 myApp.use(router);
-myApp.use(pinia)
+myApp.use(pinia);
 
 myApp.use(Quasar, {
   plugins: {

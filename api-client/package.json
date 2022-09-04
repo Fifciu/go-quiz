@@ -15,7 +15,7 @@
   "scripts": {
     "build": "rimraf src/dist && npx tsc",
     "start": "node src/dist/index.js",
-    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q src/dist/index.js\"",
+    "dev": "npx tsc --watch",
     "test": "jest",
     "test:coverage": "jest --coverage --coverageReporters='text-summary'",
     "test:watch": "jest --watch",
@@ -27,7 +27,6 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^18.7.14",
-    "concurrently": "^7.3.0",
     "nodemon": "^2.0.19",
     "rimraf": "^3.0.2",
     "typescript": "^4.8.2"

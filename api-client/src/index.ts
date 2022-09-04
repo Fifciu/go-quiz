@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { Axios } from 'axios';
 import { 
   ApiError, 
   UsersSignUpDraft, 
@@ -7,26 +7,38 @@ import {
   UserPublic 
 } from './types';
 
-const instance = axios.create({
-  baseURL: `${process.env.api_protocol}://${process.env.api_host}:${process.env.api_port}`
-});
+let instance: Axios;
 
-const client = {
+export const client = {
   users: {
-    async signUp (payload: UsersSignUpDraft): Promise<UsersToken | ApiError> {
+    async signUp (payload: UsersSignUpDraft): Promise<void> {
       return await instance.post('/users/register', payload)
     },
-    async signIn (payload: UsersSignInDraft): Promise<UsersToken | ApiError> {
+    async signIn (payload: UsersSignInDraft): Promise<void> {
       return await instance.post('/users/login', payload)
     },
-    async refreshToken (): Promise<UsersToken | ApiError> {
+    async refreshToken (): Promise<void> {
       return await instance.post('/users/refresh')
     },
-    async me (): Promise<UserPublic | ApiError> {
-      return await instance.post('/users/me')
+    async me (): Promise<UserPublic> {
+      return (await instance.post('/users/me')).data;
     }
   }
 };
 
-export default client;
+export const configureClient = ({
+  protocol,
+  host,
+  port
+}: {
+  protocol: string,
+  host: string,
+  port: string
+}) => {
+  instance = axios.create({
+    baseURL: `${protocol}://${host}:${port}`,
+    withCredentials: true
+  });
+};
+
 export * from './types';

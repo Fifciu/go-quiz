@@ -2,6 +2,7 @@
   "name": "api-client",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "src/dist/index.js",
   "types": "src/dist/index.d.ts",
   "files": [

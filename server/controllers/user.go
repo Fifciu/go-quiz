@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/mail"
 	"os"
 	"strconv"
 	"time"
@@ -43,22 +44,38 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if body.Fullname == "" {
-		utils.JsonErrorResponse(w, http.StatusBadRequest, "Missing field 'fullname'")
+		utils.JsonErrorResponse(w, http.StatusBadRequest, "Missing Full name.")
+		return
+	}
+
+	if len(body.Fullname) < 3 {
+		utils.JsonErrorResponse(w, http.StatusBadRequest, "Full name has to be at least 3 characters long.")
 		return
 	}
 
 	if body.Email == "" {
-		utils.JsonErrorResponse(w, http.StatusBadRequest, "Missing field 'email'")
+		utils.JsonErrorResponse(w, http.StatusBadRequest, "Missing email address.")
+		return
+	}
+
+	_, err = mail.ParseAddress(body.Email)
+	if err != nil {
+		utils.JsonErrorResponse(w, http.StatusBadRequest, "Wrong email address.")
 		return
 	}
 
 	if body.Password == "" {
-		utils.JsonErrorResponse(w, http.StatusBadRequest, "Missing field 'password'")
+		utils.JsonErrorResponse(w, http.StatusBadRequest, "Missing password.")
+		return
+	}
+
+	if len(body.Password) < 8 {
+		utils.JsonErrorResponse(w, http.StatusBadRequest, "Password has to be at least 8 characters long.")
 		return
 	}
 
 	if d.More() {
-		utils.JsonErrorResponse(w, http.StatusBadRequest, "Extraneous data after JSON object")
+		utils.JsonErrorResponse(w, http.StatusBadRequest, "Extraneous data after JSON object.")
 		return
 	}
 
@@ -104,17 +121,17 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if body.Email == "" {
-		utils.JsonErrorResponse(w, http.StatusBadRequest, "Missing field 'email'")
+		utils.JsonErrorResponse(w, http.StatusBadRequest, "Missing email address.")
 		return
 	}
 
 	if body.Password == "" {
-		utils.JsonErrorResponse(w, http.StatusBadRequest, "Missing field 'password'")
+		utils.JsonErrorResponse(w, http.StatusBadRequest, "Missing password.")
 		return
 	}
 
 	if d.More() {
-		utils.JsonErrorResponse(w, http.StatusBadRequest, "Extraneous data after JSON object")
+		utils.JsonErrorResponse(w, http.StatusBadRequest, "Extraneous data after JSON object.")
 		return
 	}
 
@@ -126,7 +143,7 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password))
 	if err != nil {
-		utils.JsonErrorResponse(w, http.StatusBadRequest, "Wrong email or password")
+		utils.JsonErrorResponse(w, http.StatusBadRequest, "Wrong email or password.")
 		return
 	}
 
@@ -150,10 +167,10 @@ func RefreshToken(w http.ResponseWriter, r *http.Request) {
 	c, err := r.Cookie(cookieKey)
 	if err != nil {
 		if err == http.ErrNoCookie {
-			utils.JsonErrorResponse(w, http.StatusUnauthorized, "Authorization cookie not sent")
+			utils.JsonErrorResponse(w, http.StatusUnauthorized, "Authorization cookie not sent.")
 			return
 		}
-		utils.JsonErrorResponse(w, http.StatusBadRequest, "Bad request")
+		utils.JsonErrorResponse(w, http.StatusBadRequest, "Bad request.")
 		return
 	}
 	tokenFromCookie := c.Value

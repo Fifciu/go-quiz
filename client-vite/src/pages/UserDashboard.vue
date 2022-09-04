@@ -39,8 +39,12 @@ onMounted(async () => {
             <q-spinner-hourglass color="white" size="4em" />
             <q-tooltip>Loading available tests...</q-tooltip>
           </div>
-          <div v-else-if="tests.length">
-            <TestBlock />
+          <div class="q-pa-md row items-start q-gutter-md" v-else-if="tests.length">
+            <TestBlock 
+              v-for="test in tests"
+              :key="test.id"
+              v-bind="test"
+            />
           </div>
           <q-card class="my-card text-black" v-else>
             <q-card-section>

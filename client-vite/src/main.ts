@@ -5,17 +5,21 @@ import '@quasar/extras/material-icons/material-icons.css';
 import 'quasar/src/css/index.sass';
 import App from './App.vue';
 
-import routes from './routes';
-import * as VueRouter from 'vue-router';
+import router from './router';
+import { configureClient } from 'api-client';
+import { createPinia } from 'pinia';
 
-const router = VueRouter.createRouter({
-  history: VueRouter.createWebHashHistory(),
-  routes
+configureClient({
+  protocol: import.meta.env.api_protocol as string,
+  host: import.meta.env.api_host as string,
+  port: import.meta.env.api_port as string,
 });
 
+const pinia = createPinia();
 const myApp = createApp(App);
 
 myApp.use(router);
+myApp.use(pinia)
 
 myApp.use(Quasar, {
   plugins: {

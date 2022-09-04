@@ -1,10 +1,14 @@
 <script lang="ts" setup>
-import { reactive, ref, watch } from 'vue';
+import { onMounted, reactive, ref, watch } from 'vue';
 import { useQuasar } from 'quasar'
 import { emailValidator } from '../utils/emailValidator';
 import TransitionExpand from '../components/TransitionExpand.vue';
+import { client, UsersSignUpDraft } from 'api-client';
+import { AxiosError } from 'axios';
+import HomeLogoWrapper from '../components/HomeLogoWrapper.vue';
+import { useRoute, useRouter } from 'vue-router';
 
-const user = reactive({
+const user = reactive<UsersSignUpDraft>({
   email: '',
   fullname: '',
   password: ''
@@ -12,28 +16,57 @@ const user = reactive({
 
 const uiForm = ref(null);
 
-const $q = useQuasar()
+const $q = useQuasar();
+const route = useRoute();
+const router = useRouter();
 
 const REGISTER_TAB = 'register';
 const LOGIN_TAB = 'login';
 const tab = ref(LOGIN_TAB);
 
-const onSubmit = () => {
-  if (accept.value !== true) {
-    $q.notify({
-      color: 'red-5',
-      textColor: 'white',
-      icon: 'warning',
-      message: 'You need to accept the license and terms first'
-    })
-  }
-  else {
-    $q.notify({
-      color: 'green-4',
-      textColor: 'white',
-      icon: 'cloud_done',
-      message: 'Submitted'
-    })
+const onSubmit = async () => {
+  if (tab.value === REGISTER_TAB) {
+    try {
+      await client.users.signUp(user);
+
+      $q.notify({
+        color: 'green-4',
+        textColor: 'white',
+        icon: 'cloud_done',
+        message: 'Succesfully created account!'
+      });
+      router.push({ name: 'user-dashboard '});
+
+    } catch (err: AxiosError) {
+      $q.notify({
+        color: 'red-5',
+        textColor: 'white',
+        icon: 'warning',
+        message: err.response.data.message
+      })
+    }
+  } else if (tab.value === LOGIN_TAB) {
+    try {
+      await client.users.signIn({
+        email: user.email,
+        password: user.password
+      });
+      $q.notify({
+        color: 'green-4',
+        textColor: 'white',
+        icon: 'cloud_done',
+        message: 'Succesfully signed in!'
+      });
+      router.push({ name: 'user-dashboard' });
+    } catch (err: AxiosError) {
+      console.log(err)
+      $q.notify({
+        color: 'red-5',
+        textColor: 'white',
+        icon: 'warning',
+        message: err.response.data.message
+      })
+    }
   }
 }
 
@@ -46,20 +79,23 @@ const onReset = () => {
 
 watch(tab, onReset);
 
+onMounted(() => {
+  if (route.query.error == '401') {
+    $q.notify({
+      color: 'red-5',
+      textColor: 'white',
+      icon: 'warning',
+      message: 'Unauthorized. Please sign in to access this route.'
+    })
+  }
+})
+
 </script>
 
 <template>
   <div class="home__wrapper">
     <div class="home">
-      <div class="home__logo__wrapper">
-        <div class="home__logo-inner-wrapper">
-          <div class="logo__igi__wrapper">
-            <img src="/IGIGOResized.png" class="home__logo logo__igi" />
-            <img src="/IGIWlos.png" class="home__logo logo__igi__wlos" />
-          </div>
-          <img src="/FilipGOResized.png" class="home__logo home__logo__fifi" />
-        </div>
-      </div>
+      <HomeLogoWrapper />
       <div class="home__card">
 
         <q-card class="text-black">
@@ -72,8 +108,8 @@ watch(tab, onReset);
             <q-card-section>
               <TransitionExpand>
                 <q-input v-if="tab === REGISTER_TAB" label="Your full name *" hint="Full name" lazy-rules :rules="[
-                  val => val && val.length > 0 || 'Please type something',
-                  val => val && val.lenght >= 3 || 'Full name has to have at least 3 chars'
+                  val => val?.length > 0 || 'Please type something',
+                  val => val?.length >= 3 || 'Full name has to be at least 3 characters long'
                 ]" bottom-slots v-model="user.fullname">
                   <template v-slot:prepend>
                     <q-icon name="person" />
@@ -83,16 +119,16 @@ watch(tab, onReset);
 
               <q-input label="Your email address *" hint="Email address" lazy-rules :rules="[
                 val => val && val.length > 0 || 'Please type something',
-                val => val && emailValidator(val) || 'Wrong email'
+                val => val && emailValidator(val) || 'Wrong email address'
               ]" bottom-slots v-model="user.email">
                 <template v-slot:prepend>
                   <q-icon name="contact_mail" />
                 </template>
               </q-input>
 
-              <q-input label="Your password *" hint="Password" lazy-rules :rules="[
+              <q-input type="password" label="Your password *" hint="Password" lazy-rules :rules="[
                 val => val && val.length > 0 || 'Please type something',
-                val => val && val.length >= 8 || 'Password must has at least 8 characters'
+                val => val && val.length >= 8 || 'Password has to be at least 8 characters long'
               ]" bottom-slots v-model="user.password">
                 <template v-slot:prepend>
                   <q-icon name="lock" />
@@ -119,11 +155,6 @@ watch(tab, onReset);
   justify-content: center;
   flex-wrap: wrap;
 
-&__logo-inner-wrapper {
-    display: flex;
-
-  }
-
   &__tabs {
     background: #1a1a1a;
 
@@ -147,48 +178,8 @@ watch(tab, onReset);
     font-size: 1.25em;
   }
 
-  &__logo {
-    max-width: 150px;
-    margin-bottom: -46px;
-
-    &__fifi {
-      transform: rotate(353deg);
-      left: -28px;
-      position: relative;
-    }
-  }
-
-  &__logo__wrapper {
-    width: 100%;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-  }
-
   &__card {
     min-width: 300px;
   }
-}
-
-.logo {
-  &__igi {
-
-    &__wrapper {
-      position: relative;
-    bottom: -39px;
-      left: -19px;
-
-    }
-
-    &__wlos {
-      position: absolute;
-      z-index:1;
-      left: 0;
-      bottom: 0;
-      max-width:30px;
-      pointer-events: none;
-    }
-  }
-
 }
 </style>

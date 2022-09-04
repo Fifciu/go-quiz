@@ -9,7 +9,9 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.14.2",
+    "api-client": "1.0.0",
     "axios": "^0.27.2",
+    "pinia": "^2.0.21",
     "quasar": "^2.7.4",
     "vue": "^3.2.25",
     "vue-router": "4"

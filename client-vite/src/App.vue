@@ -22,6 +22,10 @@ body {
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fcc2c0", endColorstr="#006cad", GradientType=1);
 }
 
+.q-body--prevent-scroll {
+  position: static !important;
+}
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.5s ease;

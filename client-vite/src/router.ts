@@ -20,6 +20,14 @@ const routes: RouteRecordRaw[] = [
       middleware: authMiddleware
     }, 
     component: () => import('./pages/UserDashboard.vue')
+  },
+  {
+    name: 'quiz',
+    path: '/quiz/:testId', 
+    meta: {
+      middleware: authMiddleware
+    }, 
+    component: () => import('./pages/Quiz.vue')
   }
 ];
 

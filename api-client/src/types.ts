@@ -30,3 +30,35 @@ export interface TestPublic {
   description: string;
   image_url: string;
 };
+
+export interface UserResult {
+  id: number;
+  test_id: number;
+  user_id: number;
+  start_datetime: string;
+  finish_datetime?: string;
+};
+
+export interface Answer {
+  id: number;
+  content: string;
+};
+
+export interface QuestionWithAnswers {
+  id: number;
+  content: string;
+  answers: Answer[];
+};
+
+export interface UserAnswer {
+  id: number,
+  user_id: number,
+  answer_id: number,
+  created_at: string
+};
+
+export interface FinalUserResult {
+  question: string,
+  answer: string,
+  is_proper: boolean
+}

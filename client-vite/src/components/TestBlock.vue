@@ -30,17 +30,18 @@ const startTest = async () => {
 <template>
   <q-card class="my-card">
     <q-dialog v-model="isModalActive">
-      <q-card>
+      <q-card class="text-black">
         <q-card-section>
-          <div class="text-h6">Alert</div>
+          <div class="text-h6">Are you sure?</div>
         </q-card-section>
 
         <q-card-section class="q-pt-none">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum repellendus sit voluptate voluptas eveniet porro. Rerum blanditiis perferendis totam, ea at omnis vel numquam exercitationem aut, natus minima, porro labore.
+          You will start a new test session.
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" @click.native="startTest" v-close-popup />
+          <q-btn flat label="Exit" color="red" v-close-popup />
+          <q-btn flat label="Sure, let's start" color="primary" @click.native="startTest" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -63,7 +64,7 @@ const startTest = async () => {
 
         <q-space />
 
-        <q-btn
+        <!-- <q-btn
           v-if="alreadyDone"
           color="grey"
           round
@@ -71,17 +72,17 @@ const startTest = async () => {
           dense
           :icon="expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
           @click="expanded = !expanded"
-        />
+        /> -->
       </q-card-actions>
 
-      <q-slide-transition>
+      <!-- <q-slide-transition>
         <div v-show="expanded">
           <q-separator />
           <q-card-section class="text-subitle2">
             {{ lorem }}
           </q-card-section>
         </div>
-      </q-slide-transition>
+      </q-slide-transition> -->
     </q-card>
 </template>
 

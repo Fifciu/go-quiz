@@ -16,8 +16,10 @@ onMounted(async () => {
   await me();
 
   tests.value = await client.tests.getAll();
+  arr.value = await client.tests.results();
   loadingTests.value = false;
 });
+const arr = ref([]) as any;
 
 const logout = () => {
   Cookies.remove(import.meta.env.cookie_token_key);

@@ -79,7 +79,7 @@ const onReset = () => {
 
 watch(tab, onReset);
 
-onMounted(() => {
+onMounted(async () => {
   if (route.query.error == '401') {
     $q.notify({
       color: 'red-5',
@@ -88,7 +88,7 @@ onMounted(() => {
       message: 'Unauthorized. Please sign in to access this route.'
     })
   }
-})
+});
 
 </script>
 

@@ -28,6 +28,14 @@ const routes: RouteRecordRaw[] = [
       middleware: authMiddleware
     }, 
     component: () => import('./pages/Quiz.vue')
+  },
+  {
+    name: 'quiz-results',
+    path: '/quiz/:testId/results', 
+    meta: {
+      middleware: authMiddleware
+    }, 
+    component: () => import('./pages/QuizResults.vue')
   }
 ];
 

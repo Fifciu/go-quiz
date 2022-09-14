@@ -80,6 +80,17 @@ export const useUserResultStore = defineStore('userResult', {
         throw new Error(`[useUserStore] Cannot finish. User didn't answer every question!`)
       }
       this.results = await client.results.finish(this.id);
+    },
+
+    clearStorage () {
+      this.id = -1;
+      this.test_id = -1;
+      this.user_id = -1;
+      this.start_datetime = '';
+      this.finish_datetime = '';
+      this.questions = [];
+      this.answers = [];
+      this.results = []
     }
   }
 });

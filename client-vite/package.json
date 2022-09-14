@@ -17,12 +17,16 @@
     "vue-router": "4"
   },
   "devDependencies": {
+    "@quasar/quasar-app-extension-testing-unit-jest": "^2.2.3",
     "@quasar/vite-plugin": "^1.0.10",
     "@types/node": "^18.0.0",
     "@vitejs/plugin-vue": "^2.3.3",
+    "@vue/test-utils": "^2.0.2",
     "sass": "1.32.12",
+    "ts-jest": "^29.0.0",
     "typescript": "^4.5.4",
     "vite": "^2.9.9",
+    "vue-jest": "^5.0.0-alpha.10",
     "vue-tsc": "^0.34.7"
   }
 }

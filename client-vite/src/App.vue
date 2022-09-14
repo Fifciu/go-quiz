@@ -35,4 +35,19 @@ body {
 .fade-leave-to {
   opacity: 0;
 }
+
+.slide-right-enter-active,
+.slide-right-leave-active {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  will-change: transform, opacity;
+}
+
+.slide-right-enter-from{
+  transform: translateX(-200%);
+  opacity: 0;
+}
+.slide-right-leave-to {
+  transform: translateX(200%);
+  opacity: 0;
+}
 </style>

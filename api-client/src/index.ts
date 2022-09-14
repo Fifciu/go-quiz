@@ -33,6 +33,9 @@ export const client = {
     },
     async questionsAndAnswers (testId: number): Promise<QuestionWithAnswers[]> {
       return (await instance.get(`/tests/${testId}/questions/answers`)).data
+    },
+    async results (): Promise<TestPublic[]> {
+      return (await instance.get('/tests/results')).data
     }
   },
   results: {
@@ -46,7 +49,7 @@ export const client = {
   },
   answers: {
     async do (answerId: number): Promise<UserAnswer> {
-      return (await instance.post(`/answers/${answerId}`)).data
+      return (await instance.put(`/answers/${answerId}`)).data
     }
   }
 };

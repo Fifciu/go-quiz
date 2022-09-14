@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { onBeforeMount, ref } from 'vue';
+import { computed, onBeforeMount, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useUserResultStore } from '../stores/userResult.store';
+import QuizQuestion from '../components/QuizQuestion.vue';
 
 const props = defineProps({
   id: Number,
@@ -16,11 +17,12 @@ const isLoading = ref(false);
 const userResultManager = useUserResultStore();
 const router = useRouter();
 const route = useRoute();
+const currentQuestionIndex = ref(0);
+const currentQuestion = computed(() => userResultManager.questions[currentQuestionIndex.value]);
 
 const reinitTest = async () => {
   await userResultManager.start(route.params.testId as any);
   await userResultManager.getQuestions();
-  userResultManager.id
 };
 
 onBeforeMount(async () => {
@@ -30,10 +32,37 @@ onBeforeMount(async () => {
     isLoading.value = false;
   }
 });
+
+const onAnswer = async (answerId: number) => {
+  await userResultManager.answer(answerId);
+  if (userResultManager.isAlreadyFinished) {
+    await userResultManager.finish();
+    return router.push({
+      name: 'quiz-results',
+      params: {
+        testId: route.params.testId
+      }
+    })
+  }
+
+  currentQuestionIndex.value++;
+};
 </script>
 
 <template>
   <div class="quiz">
-    Hello! {{ userResultManager.questions }}
+    <transition name="slide-right" mode="out-in">
+      <component 
+        v-if="currentQuestion"
+        :is="QuizQuestion"
+        :key="currentQuestion"
+        :questionWithAnswers="currentQuestion"
+        @answer="onAnswer"
+      />
+    </transition>
   </div>
 </template>
+
+<style lang="scss">
+
+</style>
